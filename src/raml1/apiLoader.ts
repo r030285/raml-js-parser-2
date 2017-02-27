@@ -14,7 +14,7 @@ import hlimpl=require("../raml1/highLevelImpl")
 import ll=require("../raml1/lowLevelAST")
 import llimpl=require("../raml1/jsyaml/jsyaml2lowLevel")
 import expander=require("../raml1/ast.core/expander")
-import expanderHL=require("../raml1/ast.core/expanderHL")
+import expanderLL=require("../raml1/ast.core/expanderLL")
 import util=require("../util/index")
 import universeDef=require("../raml1/tools/universe")
 import parserCore=require('../raml1/wrapped-ast/parserCore')
@@ -34,10 +34,10 @@ export function load(ramlPath:string,options?:parserCoreApi.Options2):Promise<Ob
     return loadRAMLAsyncHL(ramlPath).then(hlNode=>{
         var expanded:hl.IHighLevelNode;
         if(options.expandLibraries) {
-            expanded = expanderHL.expandLibrariesHL(hlNode);
+            expanded = expanderLL.expandLibrariesHL(hlNode);
         }
         else{
-            expanded = expanderHL.expandTraitsAndResourceTypesHL(hlNode);
+            expanded = expanderLL.expandTraitsAndResourceTypesHL(hlNode);
         }
         return tckDumperHL.dump(expanded,{
             rootNodeDetails: true,
@@ -52,10 +52,10 @@ export function loadSync(ramlPath:string,options?:parserCoreApi.Options2):Object
     var hlNode = loadRAMLInternalHL(ramlPath);
     var expanded:hl.IHighLevelNode;
     if (options.expandLibraries) {
-        expanded = expanderHL.expandLibrariesHL(hlNode)||hlNode;
+        expanded = expanderLL.expandLibrariesHL(hlNode)||hlNode;
     }
     else {
-        expanded = expanderHL.expandTraitsAndResourceTypesHL(hlNode)||hlNode;
+        expanded = expanderLL.expandTraitsAndResourceTypesHL(hlNode)||hlNode;
     }
     return tckDumperHL.dump(expanded,{
         rootNodeDetails: true,

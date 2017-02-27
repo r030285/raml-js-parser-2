@@ -6,6 +6,7 @@ import universes = require("../tools/universe");
 import jsyaml = require("../jsyaml/jsyaml2lowLevel")
 import yaml = require("yaml-ast-parser")
 import universeHelpers = require("../tools/universeHelpers");
+import referencepatcherLL = require("./referencePatcherLL");
 
 import resourceRegistry = require('../jsyaml/resourceRegistry');
 import hlImpl = require("../highLevelImpl");
@@ -42,19 +43,13 @@ export class NamespaceResolver{
                 }
             }
         }
-        var eValue = extendsValue(unit);
-        while(eValue){
-            unit = unit.resolve(eValue);
-            if(unit){
-                uModel = this.unitModel(unit);
-                if(!uModel.traits.isEmpty()||!uModel.resourceTypes.isEmpty()){
-                    return true;
-                }
-                eValue = extendsValue(unit);
+        var unit = extendedUnit(unit);
+        while(unit){
+            uModel = this.unitModel(unit);
+            if(!uModel.traits.isEmpty()||!uModel.resourceTypes.isEmpty()){
+                return true;
             }
-            else {
-                eValue = null;
-            }
+            unit = extendedUnit(unit);
         }
         return false;
     }
@@ -122,13 +117,9 @@ export class NamespaceResolver{
                 if (fLine && fLine.length == 3 && (
                     fLine[2] == def.universesInfo.Universe10.Overlay.name ||
                     fLine[2] == def.universesInfo.Universe10.Extension.name)) {
-                    var eValue = extendsValue(u);
-                    if(eValue) {
-                        _unit = u.resolve(eValue);
-
-                        if (_unit && resourceRegistry.isWaitingFor(_unit.absolutePath())) {
-                            _unit = null;
-                        }
+                    _unit = extendedUnit(u);
+                    if (_unit && resourceRegistry.isWaitingFor(_unit.absolutePath())) {
+                        _unit = null;
                     }
                 }
             }
@@ -435,9 +426,12 @@ export class ElementsCollection{
 
     map:{[key:string]:ll.ILowLevelASTNode} = {};
 
+    templateModels:{[key:string]:TemplateModel};
+
     addElement(node:ll.ILowLevelASTNode){
         this.array.push(node);
         this.map[node.key()] = node;
+        this.addTemplateModel(node);
     }
 
     hasElement(name:string):boolean{
@@ -446,6 +440,34 @@ export class ElementsCollection{
 
     getElement(name:string):ll.ILowLevelASTNode{
         return this.map[name];
+    }
+
+    getTemplateModel(name:string){
+        if(!this.templateModels){
+            return null;
+        }
+        return this.templateModels[name];
+    }
+
+    private addTemplateModel(node:ll.ILowLevelASTNode){
+        let kind:string;
+        if(this.name == def.universesInfo.Universe10.LibraryBase.properties.traits.name){
+            kind = def.universesInfo.Universe10.Trait.name;
+        }
+        else if(this.name == def.universesInfo.Universe10.LibraryBase.properties.resourceTypes.name){
+            kind = def.universesInfo.Universe10.ResourceType.name;
+        }
+        if(!kind){
+            return;
+        }
+        var name = node.key();
+        let tm = toTemplateModel(name,kind,node);
+        if(tm){
+            if(!this.templateModels){
+                this.templateModels = {};
+            }
+            this.templateModels[name] = tm;
+        }
     }
 
     isEmpty(){
@@ -546,11 +568,94 @@ export class UnitModel{
     }
 }
 
+var transitionsMap: referencepatcherLL.TransitionMap;
+
+function initTransitions(){
+
+    if(transitionsMap){
+        return;
+    }
+    transitionsMap = {};
+    for(var key of Object.keys(referencepatcherLL.transitions)){
+        var trSchema = referencepatcherLL.transitions[key];
+        var tr = new referencepatcherLL.Transition(key,trSchema,transitionsMap);
+        transitionsMap[key] = tr;
+    }
+    var factory = new NamespaceResolverActionsAndConditionsFactory();
+    for(var key of Object.keys(transitionsMap)){
+        transitionsMap[key].init(factory);
+    }
+}
+
+function toTemplateModel(name:string,kind:string,node:ll.ILowLevelASTNode):TemplateModel{
+
+    initTransitions();
+    let tr = transitionsMap[kind];
+    if(!tr){
+        return null;
+    }
+    let state = new referencepatcherLL.State(null,node.unit(),null,null);
+    tr.processNode(node, state);
+    if(Object.keys(state.meta).length>0){
+        return new TemplateModel(name,kind,node,state.meta);
+    }
+    return null;
+
+}
 
 
-function extendsValue(u:ll.ICompilationUnit){
+export class TemplateModel{
+
+    constructor(public name:string, kind:string, public node:ll.ILowLevelASTNode, public typeValuedParameters:any){}
+
+}
+
+export class NamespaceResolverActionsAndConditionsFactory implements referencepatcherLL.ActionsAndCondtionsFactory{
+    
+    parent = new referencepatcherLL.ReferencePatcherActionsAndConditionsFactory()
+
+    action(actionName:string):referencepatcherLL.Action{
+        var action:referencepatcherLL.Action;
+        if (actionName == "##patch") {
+            action = checkTypeValue;
+        }
+        else {
+            action = dummyAction;
+        }
+        return action;
+    }
+
+    condition(name:string):referencepatcherLL.Condition{
+        return this.parent.condition(name);
+    }
+
+}
+
+function checkTypeValue(node:ll.ILowLevelASTNode,state:referencepatcherLL.State){
+    var value = node.value();
+    if(typeof value != "string"){
+        return false;
+    }
+    if(util.stringStartsWith(value,"<<")&&util.stringEndsWith(value,">>")){
+        value = value.substring("<<".length,value.length-">>".length);
+        if(value.indexOf("<<")<0){
+            state.meta[value] = true;
+        }
+    }
+    return false;
+}
+
+function dummyAction(node:ll.ILowLevelASTNode,state:referencepatcherLL.State){
+    return false;
+}
+
+export function extendedUnit(u:ll.ICompilationUnit):ll.ICompilationUnit{
 
     var node = u.ast();
     var eNode = _.find(node.children(), x=>x.key()==universes.Universe10.Extension.properties.extends.name);
-    return eNode && eNode.value();
+    var eValue = eNode && eNode.value();
+    if(!eValue){
+        return null;
+    }
+    return u.resolve(eValue);
 }
