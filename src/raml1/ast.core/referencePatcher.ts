@@ -222,14 +222,10 @@ export class ReferencePatcher{
                 localType = superTypes[0];
             }
         }
-        var isExternal = localType.isExternal();
-        if(!isExternal){
-            for(var st of localType.superTypes()){
-                isExternal = st.isExternal();
-                if(isExternal){
-                    break;
-                }
-            }
+
+        var isExternal = isExternalType(localType);
+        if(!isExternal && localType.isArray()){
+            isExternal = isExternalType((<def.rt.nominalInterfaces.IArrayType>localType).componentType());            
         }
         
         if(!isExternal) {
@@ -276,6 +272,9 @@ export class ReferencePatcher{
                                 else {
                                     stringToPatch = actualValue;
                                 }
+                            }
+                            else if (escapeData.status == ParametersEscapingStatus.ERROR){
+                                return;
                             }
                             else {
                                 transformer = null;
@@ -746,8 +745,6 @@ export class ReferencePatcher{
                     }
                 }
             }
-            this.resetTypes(api);
-            api.resetChildren();
             if (gotContribution) {
                 var gotPatch = false;
                 do {
@@ -849,7 +846,8 @@ export class ReferencePatcher{
                 continue;
             }
             var newLlNode = llNode.replaceChild(null,e.lowLevel());
-            var newHLNode = new hlimpl.ASTNodeImpl(newLlNode,api,propRange,prop);
+            var definition = (e.isElement()&&e.asElement().definition())||propRange;
+            var newHLNode = new hlimpl.ASTNodeImpl(newLlNode,api,definition,prop);
             directChildren.push(newHLNode);
             if(mergedChildren){
                 mergedChildren.push(newHLNode);
@@ -1219,3 +1217,17 @@ export function isCompoundValue(str:string):boolean{
     }
     return false;
 }
+
+
+var isExternalType = function (localType:def.ITypeDefinition) {
+    var isExternal = !localType || localType.isExternal();
+    if (!isExternal) {
+        for (var st of localType.superTypes()) {
+            isExternal = st.isExternal();
+            if (isExternal) {
+                break;
+            }
+        }
+    }
+    return isExternal;
+};
