@@ -83,51 +83,51 @@ describe('AST Editing Reuse Test Set',function() {
             testReuseByEditing("ASTReuseTests/test18/api.raml");
         });
 
-        it('Should parse simple resource type with request body', function(){
+        it('Parse simple resource type with request body', function(){
             testReuseByEditing('parser/resourceType/resType01.raml');
         });
 
-        it('Should parse simple resource type with response body', function(){
+        it('Parse simple resource type with response body', function(){
             testReuseByEditing('parser/resourceType/resType02.raml');
         });
 
-        it('Should parse resource type with response body inherited from user defined type', function(){
+        it('Parse resource type with response body inherited from user defined type', function(){
             testReuseByEditing('parser/resourceType/resType03.raml');
         });
 
-        it('Should parse resource type with request body inherited from user defined type', function(){
+        it('Parse resource type with request body inherited from user defined type', function(){
             testReuseByEditing('parser/resourceType/resType04.raml');
         });
 
-        it('Should parse resource type with uri parameters', function(){
+        it('Parse resource type with uri parameters', function(){
             testReuseByEditing('parser/resourceType/resType05.raml');
         });
 
-        it('Should parse applying resource type with uri parameters', function(){
+        it('Parse applying resource type with uri parameters', function(){
             testReuseByEditing('parser/resourceType/resType06.raml');
         });
 
-        it('Should parse resource inherited from simple resource type with request body', function(){
+        it('Parse resource inherited from simple resource type with request body', function(){
             testReuseByEditing('parser/resourceType/resType07.raml');
         });
 
-        it('Should parse resource inherited from simple resource type with response body', function(){
+        it('Parse resource inherited from simple resource type with response body', function(){
             testReuseByEditing('parser/resourceType/resType08.raml');
         });
 
-        it('Should parse resource inherited from resource type with response body inherited from user defined type', function(){
+        it('Parse resource inherited from resource type with response body inherited from user defined type', function(){
             testReuseByEditing('parser/resourceType/resType09.raml');
         });
 
-        it('Should parse resource inherited from resource type with request body inherited from user defined type', function(){
+        it('Parse resource inherited from resource type with request body inherited from user defined type', function(){
             testReuseByEditing('parser/resourceType/resType10.raml');
         });
 
-        it('Should parse schema item as parameter', function(){
+        it('Parse schema item as parameter', function(){
             testReuseByEditing('parser/resourceType/resType17.raml');
         });
 
-        it('Should parse type item as parameter', function(){
+        it('Parse type item as parameter', function(){
             testReuseByEditing('parser/resourceType/resType18.raml');
         });
 
@@ -135,15 +135,15 @@ describe('AST Editing Reuse Test Set',function() {
             testReuseByEditing('parser/resourceType/resType19.raml');
         });
 
-        it('Should parse all resource types methods defined in the HTTP version 1.1 specification [RFC2616] and its extension, RFC5789 [RFC5789]', function(){
+        it('Parse all resource types methods defined in the HTTP version 1.1 specification [RFC2616] and its extension, RFC5789 [RFC5789]', function(){
             testReuseByEditing('parser/resourceType/resType20.raml');
         });
 
-        it('Should parse resource type method with response body', function(){
+        it('Parse resource type method with response body', function(){
             testReuseByEditing('parser/resourceType/resType15.raml');
         });
 
-        it('Should parse resource type method with request body.', function(){
+        it('Parse resource type method with request body.', function(){
             testReuseByEditing('parser/resourceType/resType16.raml');
         });
 
@@ -162,6 +162,106 @@ describe('AST Editing Reuse Test Set',function() {
          it('Disabled body test 1.0.', function(){
              testReuseByEditing('parser/resourceType/resType14.raml');
          });
+
+        it('Parse trait with header and validate it', function(){
+            testReuseByEditing('parser/trait/trait01.raml');
+        });
+
+        it('Parse trait with query parameter and validate it', function(){
+            testReuseByEditing('parser/trait/trait02.raml');
+        });
+
+        it('Parse trait with body', function(){
+            testReuseByEditing('parser/trait/trait03.raml');
+        });
+
+        it('Parse traits with parameters', function(){
+            testReuseByEditing('parser/trait/trait04.raml');
+        });
+
+        it('Parse traits with boolean parameters', function(){
+            testReuseByEditing('parser/trait/trait05.raml');
+        });
+
+        it('Parse traits with number parameters', function(){
+            testReuseByEditing('parser/trait/trait06.raml');
+        });
+
+        it('Parse object properties',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType01.raml');
+        });
+
+        it('Parse minimum number of properties',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType02.raml');
+        });
+
+        it('Parse maximum number of properties',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType03.raml');
+        });
+
+        it('Parse property required option',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType04.raml');
+        });
+
+        it('Parse property default option',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType06.raml');
+        });
+
+        it('Parse object types that inherit from other object types',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType07.raml');
+        });
+
+        it('Parse object inherit from more than one type',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType08.raml');
+        });
+
+        it('Parse shortcut scalar type property declaration',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType09.raml');
+        });
+
+        it('Parse maps type declaration',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType10.raml');
+        });
+
+        it('Parse restricting the set of valid keys by specifying a regular expression',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType11.raml');
+        });
+
+        it('Should not parse alternatively use additionalProperties',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType12.raml');
+        });
+
+        it('Parse inline type expression gets expanded to a proper type declaration',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypes/oType14.raml');
+        });
+
+        it('Parse array of scalar types declaration',function(){
+            testReuseByEditing('ASTReuseTests/library/arrayTypes/aType01.raml');
+        });
+
+        it('Parse array of complex types declaration',function(){
+            testReuseByEditing('ASTReuseTests/library/arrayTypes/aType02.raml');
+        });
+
+        it('Parse type inherited from several user defined types declaration',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypeInheritance/oti02.raml');
+        });
+
+        it('Parse type inherited from several user defined types shortcut declaration',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypeInheritance/oti03.raml');
+        });
+
+        it('Parse inheritance which should works in the types and in the mimeTypes',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypeInheritance/oti04.raml');
+        });
+
+        it('Should check that does not allowed to specify current type or type that extends current while declaring property of current type',function(){
+            testReuseByEditing('ASTReuseTests/library/objectTypeInheritance/oti07.raml');
+        });
+
+        it('Parse included json schema',function(){
+            testReuseByEditing('ASTReuseTests/library/externalTypes/eType01.raml');
+        });
     });
 });
 
