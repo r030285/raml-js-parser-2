@@ -1,4 +1,5 @@
 /// <reference path="../../../typings/main.d.ts" />
+import index = require("../../index");
 import assert = require("assert")
 import fs = require("fs")
 import path = require("path")
@@ -547,3 +548,4 @@ export function expandWrapperIfNeeded(original : RamlWrapper.Api | RamlWrapper08
 
   return (<RamlWrapper.Api>original).expand(global.isLibExpanded);
 }
+
