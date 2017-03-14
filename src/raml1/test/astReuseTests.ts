@@ -40,8 +40,8 @@ describe('AST Reuse Test Set',function() {
             test("ASTReuseTests/test01/api.raml", "ASTReuseTests/test01/api03.raml");
         });
 
-        it("Super type switch", function () {
-            test("ASTReuseTests/test02/api.raml", "ASTReuseTests/test02/api01.raml", false);
+        it("Body type switch", function () {
+            test("ASTReuseTests/test02/api.raml", "ASTReuseTests/test02/api01.raml");
         });
 
         it("Additional properties for a response mime type", function () {
@@ -116,11 +116,11 @@ describe('AST Reuse Test Set',function() {
         });
 
         it("Resource type method trait content change 1", function () {
-            test("ASTReuseTests/test13/api.raml", "ASTReuseTests/test13/api01.raml", false);
+            test("ASTReuseTests/test13/api.raml", "ASTReuseTests/test13/api01.raml");
         });
 
         it("Resource type method trait content change 2", function () {
-            test("ASTReuseTests/test13/api.raml", "ASTReuseTests/test13/api03.raml", false);
+            test("ASTReuseTests/test13/api.raml", "ASTReuseTests/test13/api03.raml");
         });
 
         it("Resource type method trait value change", function () {
