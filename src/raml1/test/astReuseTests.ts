@@ -198,6 +198,10 @@ describe('AST Reuse Test Set',function() {
         it("Resource type value change", function () {
             test("ASTReuseTests/test18/api.raml", "ASTReuseTests/test18/api07.raml");
         });
+
+        it("Add colon to 'is'", function () {
+            test("ASTReuseTests/test19/api.raml", "ASTReuseTests/test19/api01.raml");
+        });
     });
 });
 
