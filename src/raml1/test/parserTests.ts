@@ -19,6 +19,7 @@ import hl=require("../highLevelAST")
 //
 import util = require("./test-utils")
 import tools = require("./testTools")
+import index = require("../../index");
 
 //describe('Low level model', function() {
 describe('Parser integration tests',function(){
@@ -1061,6 +1062,51 @@ describe('JSON schemes tests', function () {
         this.timeout(15000);
         testErrors(util.data("parser/jsonscheme/test8/apiInvalid0.raml"), ["Missing required property: childName"]);
     })
+
+    it("Ignore unknown strig format 1" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("schema/ignoreFormats1.raml"));
+    })
+    it("Ignore unknown number format 1" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("schema/ignoreFormats2.raml"));
+    })
+    it("String instead of object as property definition" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("schema/invalidProperty.raml"),["(Invalid JSON schema: Unexpected value '\\[object Object\\]')|(Schema validation exception: Object\\.keys called on non-object)"]);
+    })
+    it("JOSN schema test Pets 10-3-inline-rtype-included-schema-filename.raml" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("parser/jsonscheme/test-pets/ramls/10-3-inline-rtype-included-schema-filename.raml"));
+    });
+    it("JOSN schema test Pets 10-1-included-rtype-included-schema-flat.raml" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("parser/jsonscheme/test-pets/ramls/10-1-included-rtype-included-schema-flat.raml"));
+    });
+    it("JOSN schema test Pets 10-2-included-rtype-included-schema-filename.raml" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("parser/jsonscheme/test-pets/ramls/10-2-included-rtype-included-schema-filename.raml"));
+    });
+    it("JOSN schema test Pets 08-1-included-rtype-included-schema-flat.raml" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("parser/jsonscheme/test-pets/ramls/08-1-included-rtype-included-schema-flat.raml"));
+    });
+    it("JOSN schema test Pets 08-2-included-rtype-included-schema-filename.raml" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("parser/jsonscheme/test-pets/ramls/08-2-included-rtype-included-schema-filename.raml"));
+    });
+    it("JOSN schema test Pets 08-3-inline-rtype-included-schema-filename.raml" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("parser/jsonscheme/test-pets/ramls/08-3-inline-rtype-included-schema-filename.raml"));
+    });
+    it("JOSN schema test Pets 08-4-included-schema-filename.raml" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("parser/jsonscheme/test-pets/ramls/08-4-included-schema-filename.raml"));
+    });
+    it("JOSN schema test Pets 10-4-included-schema-filename.raml" ,function() {
+        this.timeout(15000);
+        testErrors(util.data("parser/jsonscheme/test-pets/ramls/10-4-included-schema-filename.raml"));
+    });
 });
 
 describe("Include tests + typesystem",function (){
@@ -1361,6 +1407,16 @@ describe('RAML10/Dead Loop Tests/ResourceTypes',function(){
 describe('Dumps',function(){
     it("dump1", function () {
         testDump(util.data("dump/dump1/api.raml"), {dumpXMLRepresentationOfExamples: true});
+    });
+});
+
+describe('New API',function(){
+    it("'expandLibraries' == true by default", function () {
+        var p = util.data("parser/libraries/nestedUses/index.raml");
+        var json = index.loadSync(p);
+        var spec = json['specification'];
+        assert(!spec.hasOwnProperty("uses"));
+        assert(spec['traits']['files.hello']['name']=="hello");
     });
 });
 

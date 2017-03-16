@@ -773,7 +773,7 @@ export function validate(node:hl.IParseResult,v:hl.ValidationAcceptor){
             var vn=highLevelNode.attr(universes.Universe10.UsesDeclaration.properties.value.name);
             if (vn&&vn.value()){
                 var rs=highLevelNode.lowLevel().unit().resolve(vn.value());
-                if (!rs){
+                if (!rs || rs.contents() === null){
                     v.accept(createIssue1(messageRegistry.INVALID_LIBRARY_PATH,
                         {path:vn.value()},highLevelNode,false));
                 } else if(!resourceRegistry.isWaitingFor(vn.value())){
@@ -797,10 +797,15 @@ export function validate(node:hl.IParseResult,v:hl.ValidationAcceptor){
                         });
                         for(var issue of issues) {
                             var _issue = issue;
-                            while(_issue.extras.length>0){
+                            while(_issue.extras && _issue.extras.length>0){
                                 _issue = _issue.extras[0];
                             }
+                            
                             if(_issue != brand) {
+                                if(!_issue.extras) {
+                                    _issue.extras = [];
+                                }
+                                
                                 _issue.extras.push(brand);
                             }
                             v.accept(issue);
@@ -1446,7 +1451,7 @@ function isValidValueType(t:hl.ITypeDefinition,h:hl.IHighLevelNode, v:any,p:hl.I
             if(isTypeProp){
                 return false;
             }
-            var tm = su.createSchema(v, contentProvider(h.lowLevel()));
+            var tm = su.createSchema(v, contentProvider(h.lowLevel(),attr&&attr.lowLevel()));
             if(!tm){
                 return tm;
             }
@@ -1580,7 +1585,7 @@ class NormalValidator implements PropertyValidator{
                     if (decl instanceof Error) {
                         if(ValidationError.isInstance(decl)){
                             var ve = <ValidationError>decl;
-                            v.accept(createIssue1(ve.messageEntry,ve.parameters, node));
+                            v.accept(createIssue1(ve.messageEntry,ve.parameters, node,(<any>ve).isWarning));
                         }
                         else {
                             v.accept(createIssue1(messageRegistry.SCHEMA_EXCEPTION, {msg:(<Error>decl).message}, node));
@@ -1600,7 +1605,7 @@ class NormalValidator implements PropertyValidator{
                         if (validation instanceof Error&&vl){
                             if(ValidationError.isInstance(validation)){
                                 var ve = <ValidationError>validation;
-                                v.accept(createIssue1(ve.messageEntry,ve.parameters, node));
+                                v.accept(createIssue1(ve.messageEntry,ve.parameters, node,(<any>ve).isWarning));
                             }
                             else {
                                 v.accept(createIssue1(messageRegistry.SCHEMA_EXCEPTION, {msg:(<Error>validation).message}, node));
@@ -3262,8 +3267,14 @@ class ValidateChildrenKeys implements NodeValidator {
     }
 }
 
-function contentProvider(lowLevel: any) {
-    var root = lowLevel && lowLevel.includeBaseUnit() && ((lowLevel.includePath && lowLevel.includePath()) ? lowLevel.includeBaseUnit().resolve(lowLevel.includePath()) : lowLevel.includeBaseUnit());
+function contentProvider(lowLevel: any,chLL?:any) {
+    let root = lowLevel && lowLevel.includeBaseUnit() && ((lowLevel.includePath && lowLevel.includePath()) ? lowLevel.includeBaseUnit().resolve(lowLevel.includePath()) : lowLevel.includeBaseUnit());
+    if(chLL){
+        let root1 = chLL && chLL.includeBaseUnit() && ((chLL.includePath && chLL.includePath()) ? chLL.includeBaseUnit().resolve(chLL.includePath()) : chLL.includeBaseUnit());
+        if(root1!=root){
+            root = root1;
+        }
+    }
 
     return new contentprovider.ContentProvider(root);
 }
