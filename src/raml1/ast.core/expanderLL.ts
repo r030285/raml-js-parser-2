@@ -271,6 +271,8 @@ export class TraitsAndResourceTypesExpander {
         resource.preserveAnnotations();
         resource.takeOnlyOriginalChildrenWithKey(
             def.universesInfo.Universe10.ResourceBase.properties.type.name);
+        resource.takeOnlyOriginalChildrenWithKey(
+            def.universesInfo.Universe10.FragmentDeclaration.properties.uses.name);
         resourceData.filter(x=>x.resourceType!=null).forEach(x=> {
             var resourceTypeLowLevel = <proxy.LowLevelCompositeNode>x.resourceType.node;
             var resourceTypeTransformer = x.resourceType.transformer;
@@ -284,6 +286,8 @@ export class TraitsAndResourceTypesExpander {
             if(!isPossibleMethodName(name)){
                 continue;
             }
+            m.takeOnlyOriginalChildrenWithKey(
+                def.universesInfo.Universe10.FragmentDeclaration.properties.uses.name);
 
             var allTraits:GenericData[]=[]
             resourceData.forEach(x=>{
