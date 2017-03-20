@@ -657,6 +657,9 @@ export class ReferencePatcher {
                     stringToPatch = actualValue;
                 }
             }
+            else if (escapeData.status == referencePatcherHL.ParametersEscapingStatus.ERROR){
+                return;
+            }
             else {
                 transformer = null;
             }

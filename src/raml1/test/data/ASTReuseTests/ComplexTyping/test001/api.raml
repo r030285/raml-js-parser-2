@@ -9,8 +9,11 @@ securitySchemes:
     type: Basic Authentication
 
 types:
-  T0: string
+  T0:
+    type: lib.LibType1
+    maxLength: 16
   T1:
+    type: lib.LibType2
     properties:
       p1:
       p2: number
@@ -19,6 +22,11 @@ types:
     properties:
       p3: boolean
       p4: date-only
+
+uses:
+  lib: lib.raml
+
+/resource0: !include resource.raml
 
 /resource1:
   displayName: Resource 1

@@ -9,12 +9,9 @@ import util = require("./test-utils");
 import fs = require("fs");
 
 describe('Testing AST reuse by typing simulation (complex)',function() {
-    this.timeout(15000);
-    describe('Basic Tests', function () {
-
-        it("Resource type", function () {
-            test("ASTReuseTests/ComplexTyping/test001/api.raml");
-        });
+    this.timeout(40000);
+    it("Test 001", function () {
+        test("ASTReuseTests/ComplexTyping/test001/api.raml");
     });
 });
 

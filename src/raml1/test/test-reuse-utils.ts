@@ -450,7 +450,7 @@ ${diff.map(x=>x.message("actual", "expected")).join("\n\n")}`;
         }
     }
 
-    return nonReusingApi.highLevel();
+    return reusingApi.highLevel();
 }
 
 function checkErrorPositions(errs: Object[]): Boolean{

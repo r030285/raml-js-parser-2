@@ -987,9 +987,10 @@ export function patchMethodIs(node:hl.IHighLevelNode,traits:{
     var ramlVersion = node.definition().universe().version();
     var originalLlMethod = toOriginal(llMethod);
     var isPropertyName = universeDef.Universe10.MethodBase.properties.is.name;
-    var isNode = <proxy.LowLevelCompositeNode>_.find(
+    var ownIsNode = <proxy.LowLevelCompositeNode>_.find(
         llMethod.children(), x=>x.key() == isPropertyName);
 
+    var isNode = ownIsNode;
     if(isNode==null){
         var newLLIsNode = new jsyaml.ASTNode(
             yaml.newMapping(yaml.newScalar(isPropertyName), yaml.newItems())
@@ -997,6 +998,7 @@ export function patchMethodIs(node:hl.IHighLevelNode,traits:{
 
         isNode = (<proxy.LowLevelCompositeNode>llMethod).replaceChild(null,newLLIsNode);
     }
+    
     var originalIsNode = _.find(originalLlMethod.children(), x=>x.key()==isPropertyName);
     var childrenToPreserve = (originalIsNode != null && (originalIsNode.unit().absolutePath() == rootPath))
         ? originalIsNode.children() : [];
@@ -1009,6 +1011,11 @@ export function patchMethodIs(node:hl.IHighLevelNode,traits:{
         }
         return null;
     })).filter(x=>x!=null);
+
+    if(newTraits.length==0&&traits.length<=1){
+        return ownIsNode;
+    }
+    
     isNode.setChildren(newTraits);
     isNode.filterChildren();
     newTraits = isNode.children();

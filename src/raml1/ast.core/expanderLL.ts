@@ -302,6 +302,8 @@ export class TraitsAndResourceTypesExpander {
                         m.adopt(traitLowLevel,traitTransformer);
                         result = true;
                     });
+                } else {
+
                 }
 
                 var resourceTraits = x.traits;

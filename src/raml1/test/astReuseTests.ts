@@ -116,11 +116,11 @@ describe('AST Reuse Test Set',function() {
         });
 
         it("Resource type method trait content change 1", function () {
-            test("ASTReuseTests/test13/api.raml", "ASTReuseTests/test13/api01.raml");
+            test("ASTReuseTests/test13/api.raml", "ASTReuseTests/test13/api01.raml", false);
         });
 
         it("Resource type method trait content change 2", function () {
-            test("ASTReuseTests/test13/api.raml", "ASTReuseTests/test13/api03.raml");
+            test("ASTReuseTests/test13/api.raml", "ASTReuseTests/test13/api03.raml", false);
         });
 
         it("Resource type method trait value change", function () {

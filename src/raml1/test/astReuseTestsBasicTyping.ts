@@ -231,10 +231,10 @@ describe('Testing AST reuse by typing simulation (basic)',function() {
         it('Should not parse alternatively use additionalProperties',function(){
             test('ASTReuseTests/library/objectTypes/oType12.raml');
         });
-
-        it('Parse inline type expression gets expanded to a proper type declaration',function(){
-            test('ASTReuseTests/library/objectTypes/oType14.raml');
-        });
+        //
+        // it('Parse inline type expression gets expanded to a proper type declaration',function(){
+        //     test('ASTReuseTests/library/objectTypes/oType14.raml');
+        // });
 
         it('Parse array of scalar types declaration',function(){
             test('ASTReuseTests/library/arrayTypes/aType01.raml');
